@@ -81,6 +81,61 @@ npm run dev
 
 La aplicación se ejecutará en http://localhost:5173
 
+## Guía de Uso de la Interfaz
+
+### Gestión de Estudiantes
+1. Para crear un nuevo estudiante:
+   - Hacer clic en el botón "Nuevo Estudiante"
+   - Completar el formulario con los datos requeridos
+   - Hacer clic en "Crear"
+
+2. Para editar un estudiante:
+   - Hacer clic en el icono de edición (lápiz) junto al estudiante
+   - Modificar los datos necesarios
+   - Hacer clic en "Actualizar"
+
+3. Para eliminar un estudiante:
+   - Hacer clic en el icono de eliminación (papelera) junto al estudiante
+   - Confirmar la eliminación
+
+### Gestión de Materias
+1. Para crear una nueva materia:
+   - Hacer clic en el botón "Nueva Materia"
+   - Completar el formulario con los datos requeridos
+   - Hacer clic en "Crear"
+
+2. Para editar una materia:
+   - Hacer clic en el icono de edición (lápiz) junto a la materia
+   - Modificar los datos necesarios
+   - Hacer clic en "Actualizar"
+
+3. Para eliminar una materia:
+   - Hacer clic en el icono de eliminación (papelera) junto a la materia
+   - Confirmar la eliminación
+
+### Gestión de Matrículas
+1. Para crear una nueva matrícula:
+   - Hacer clic en el botón "Nueva Matrícula"
+   - Seleccionar el estudiante y la materia
+   - Completar los datos adicionales
+   - Hacer clic en "Crear"
+
+2. Para editar una matrícula:
+   - Hacer clic en el icono de edición (lápiz) junto a la matrícula
+   - Modificar los datos necesarios
+   - Hacer clic en "Actualizar"
+
+3. Para eliminar una matrícula:
+   - Hacer clic en el icono de eliminación (papelera) junto a la matrícula
+   - Confirmar la eliminación
+
+### Notas Importantes
+- Los registros se muestran ordenados por fecha de creación (más recientes primero)
+- Todos los campos marcados con * son obligatorios
+- Los códigos de estudiante y materia deben ser únicos
+- Un estudiante no puede estar matriculado dos veces en la misma materia
+- La interfaz es responsiva y se adapta a diferentes tamaños de pantalla
+
 ## Características Implementadas
 - Gestión de Estudiantes (CRUD)
 - Gestión de Materias (CRUD)

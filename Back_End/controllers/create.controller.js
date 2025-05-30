@@ -11,11 +11,31 @@ const createEstudiante = async (req, res) => {
             email,
             telefono,
             fecha_nacimiento,
-            fecha_ingreso,
-            estado,
-            promedio_general,
-            creditos_completados
+            estado = 'ACTIVO'
         } = req.body;
+
+        // Validar que el estado sea uno de los permitidos
+        const estadosPermitidos = ['ACTIVO', 'INACTIVO', 'GRADUADO', 'SUSPENDIDO'];
+        if (!estadosPermitidos.includes(estado)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Estado no válido. Debe ser uno de: ACTIVO, INACTIVO, GRADUADO, SUSPENDIDO'
+            });
+        }
+
+        // Verificar si ya existe un estudiante con el mismo código
+        const estudianteExistente = await prisma.estudiantes.findUnique({
+            where: {
+                codigo_estudiante: codigo_estudiante
+            }
+        });
+
+        if (estudianteExistente) {
+            return res.status(400).json({
+                success: false,
+                message: 'Ya existe un estudiante con este código'
+            });
+        }
 
         const estudiante = await prisma.estudiantes.create({
             data: {
@@ -25,10 +45,9 @@ const createEstudiante = async (req, res) => {
                 email,
                 telefono,
                 fecha_nacimiento: new Date(fecha_nacimiento),
-                fecha_ingreso: fecha_ingreso ? new Date(fecha_ingreso) : undefined,
-                estado: estado || 'ACTIVO',
-                promedio_general: promedio_general || 0.00,
-                creditos_completados: creditos_completados || 0
+                estado,
+                promedio_general: 0.00,
+                creditos_completados: 0
             }
         });
 
@@ -38,6 +57,17 @@ const createEstudiante = async (req, res) => {
             data: estudiante
         });
     } catch (error) {
+        console.error('Error al crear estudiante:', error);
+        
+        // Manejar errores específicos de Prisma
+        if (error.code === 'P2002') {
+            const campo = error.meta?.target?.[0];
+            return res.status(400).json({
+                success: false,
+                message: `Ya existe un registro con este ${campo}`
+            });
+        }
+
         res.status(400).json({
             success: false,
             message: 'Error al crear el estudiante',
@@ -54,20 +84,40 @@ const createMateria = async (req, res) => {
             nombre,
             descripcion,
             creditos,
-            nivel,
-            prerequisitos,
-            activa
+            nivel = 'BASICO'
         } = req.body;
+
+        // Validar que el nivel sea uno de los permitidos
+        const nivelesPermitidos = ['BASICO', 'INTERMEDIO', 'AVANZADO', 'EXPERTO'];
+        if (!nivelesPermitidos.includes(nivel)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nivel no válido. Debe ser uno de: BASICO, INTERMEDIO, AVANZADO, EXPERTO'
+            });
+        }
+
+        // Verificar si ya existe una materia con el mismo código
+        const materiaExistente = await prisma.materias.findUnique({
+            where: {
+                codigo_materia: codigo_materia
+            }
+        });
+
+        if (materiaExistente) {
+            return res.status(400).json({
+                success: false,
+                message: 'Ya existe una materia con este código'
+            });
+        }
 
         const materia = await prisma.materias.create({
             data: {
                 codigo_materia,
                 nombre,
                 descripcion,
-                creditos,
-                nivel: nivel || 'BASICO',
-                prerequisitos,
-                activa: activa !== undefined ? activa : true
+                creditos: parseInt(creditos),
+                nivel,
+                activa: true
             }
         });
 
@@ -77,6 +127,17 @@ const createMateria = async (req, res) => {
             data: materia
         });
     } catch (error) {
+        console.error('Error al crear materia:', error);
+        
+        // Manejar errores específicos de Prisma
+        if (error.code === 'P2002') {
+            const campo = error.meta?.target?.[0];
+            return res.status(400).json({
+                success: false,
+                message: `Ya existe un registro con este ${campo}`
+            });
+        }
+
         res.status(400).json({
             success: false,
             message: 'Error al crear la materia',
@@ -91,34 +152,63 @@ const createEstudianteMateria = async (req, res) => {
         const {
             estudiante_id,
             materia_id,
-            calificacion,
-            fecha_inscripcion,
-            fecha_finalizacion,
-            estado,
-            intentos
+            estado = 'CURSANDO'
         } = req.body;
+
+        // Validar que el estado sea uno de los permitidos
+        const estadosPermitidos = ['CURSANDO', 'APROBADO', 'REPROBADO', 'RETIRADO'];
+        if (!estadosPermitidos.includes(estado)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Estado no válido. Debe ser uno de: CURSANDO, APROBADO, REPROBADO, RETIRADO'
+            });
+        }
+
+        // Verificar si ya existe la relación
+        const relacionExistente = await prisma.estudiante_materia.findFirst({
+            where: {
+                estudiante_id: parseInt(estudiante_id),
+                materia_id: parseInt(materia_id)
+            }
+        });
+
+        if (relacionExistente) {
+            return res.status(400).json({
+                success: false,
+                message: 'Este estudiante ya está matriculado en esta materia'
+            });
+        }
 
         const estudianteMateria = await prisma.estudiante_materia.create({
             data: {
-                estudiante_id,
-                materia_id,
-                calificacion,
-                fecha_inscripcion: fecha_inscripcion ? new Date(fecha_inscripcion) : undefined,
-                fecha_finalizacion: fecha_finalizacion ? new Date(fecha_finalizacion) : undefined,
-                estado: estado || 'CURSANDO',
-                intentos: intentos || 1
+                estudiante_id: parseInt(estudiante_id),
+                materia_id: parseInt(materia_id),
+                fecha_inscripcion: new Date(),
+                estado,
+                intentos: 1
             }
         });
 
         res.status(201).json({
             success: true,
-            message: 'Relación estudiante-materia creada exitosamente',
+            message: 'Matrícula creada exitosamente',
             data: estudianteMateria
         });
     } catch (error) {
+        console.error('Error al crear matrícula:', error);
+        
+        // Manejar errores específicos de Prisma
+        if (error.code === 'P2002') {
+            const campo = error.meta?.target?.[0];
+            return res.status(400).json({
+                success: false,
+                message: `Ya existe un registro con este ${campo}`
+            });
+        }
+
         res.status(400).json({
             success: false,
-            message: 'Error al crear la relación estudiante-materia',
+            message: 'Error al crear la matrícula',
             error: error.message
         });
     }

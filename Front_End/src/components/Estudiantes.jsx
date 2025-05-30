@@ -44,7 +44,9 @@ function Estudiantes() {
       const response = await fetch(`${API_URL}/estudiantes`);
       const data = await response.json();
       if (data.success) {
-        setEstudiantes(data.data);
+        // Ordenar por ID de forma descendente (más recientes primero)
+        const estudiantesOrdenados = data.data.sort((a, b) => b.id - a.id);
+        setEstudiantes(estudiantesOrdenados);
       }
     } catch (error) {
       console.error('Error al obtener estudiantes:', error);

@@ -49,7 +49,8 @@ function EstudianteMateria() {
       const response = await fetch(`${API_URL}/estudiante-materia`);
       const data = await response.json();
       if (data.success) {
-        setRelaciones(data.data);
+        const relacionesOrdenadas = data.data.sort((a, b) => b.id - a.id);
+        setRelaciones(relacionesOrdenadas);
       }
     } catch (error) {
       console.error('Error al obtener relaciones:', error);

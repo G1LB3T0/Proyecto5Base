@@ -45,7 +45,8 @@ function Materias() {
       const response = await fetch(`${API_URL}/materias`);
       const data = await response.json();
       if (data.success) {
-        setMaterias(data.data);
+        const materiasOrdenadas = data.data.sort((a, b) => b.id - a.id);
+        setMaterias(materiasOrdenadas);
       }
     } catch (error) {
       console.error('Error al obtener materias:', error);
