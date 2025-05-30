@@ -19,6 +19,31 @@ Proyecto5Base/
 - PostgreSQL
 - npm o yarn
 
+## Configuración de la Base de Datos
+
+1. Crear una base de datos en PostgreSQL:
+```sql
+CREATE DATABASE gestion_academica;
+```
+
+2. Crear el archivo `.env` en la carpeta `Back_End` con el siguiente contenido:
+```env
+# Configuración de la base de datos PostgreSQL
+DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/gestion_academica?schema=public"
+
+# Ejemplo con valores reales:
+# DATABASE_URL="postgresql://postgres:123456@localhost:5432/gestion_academica?schema=public"
+```
+
+Reemplazar:
+- `usuario`: Tu usuario de PostgreSQL (por ejemplo: postgres)
+- `contraseña`: Tu contraseña de PostgreSQL (por ejemplo: 123456)
+- `localhost`: La dirección de tu servidor PostgreSQL (por defecto es localhost)
+- `5432`: El puerto de PostgreSQL (por defecto es 5432)
+- `gestion_academica`: El nombre de la base de datos que creaste
+
+Nota: El archivo `.env` debe estar en la raíz de la carpeta `Back_End` y no debe tener espacios alrededor del signo igual (=).
+
 ## Dependencias Backend
 ```bash
 npm install express
@@ -49,7 +74,7 @@ npm install
 ```
 
 3. Configurar la base de datos:
-- Crear un archivo .env con las credenciales de la base de datos
+- Asegurarse de que el archivo `.env` esté configurado correctamente
 - Ejecutar las migraciones de Prisma:
 ```bash
 npx prisma generate
