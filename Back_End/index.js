@@ -11,8 +11,13 @@ const estudianteMateriaRoutes = require('./routes/estudiante-materia.routes');
 const app = express();
 const prisma = new PrismaClient();
 
-// Middleware
-app.use(cors());
+// Configuración de CORS
+app.use(cors({
+  origin: 'http://localhost:5173', // URL del frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(express.json());
 
 // Rutas
@@ -21,26 +26,22 @@ app.use('/api/materias', materiasRoutes);
 app.use('/api/estudiante-materia', estudianteMateriaRoutes);
 
 // Ruta de prueba
-app.get('/', (req, res) => {
-    res.json({
-        message: 'API de Sistema de Gestión Académica',
-        version: '1.0.0',
-        endpoints: {
-            estudiantes: '/api/estudiantes',
-            materias: '/api/materias',
-            estudianteMateria: '/api/estudiante-materia'
-        }
-    });
+app.get('/api/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'API funcionando correctamente',
+    timestamp: new Date()
+  });
 });
 
-// Manejo de errores
+// Manejo de errores global
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        success: false,
-        message: 'Error interno del servidor',
-        error: err.message
-    });
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: 'Error interno del servidor',
+    error: process.env.NODE_ENV === 'development' ? err.message : undefined
+  });
 });
 
 // Puerto
@@ -48,17 +49,13 @@ const PORT = process.env.PORT || 3000;
 
 // Iniciar servidor
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
-// Manejo de cierre de la aplicación
-process.on('SIGINT', async () => {
-    await prisma.$disconnect();
-    process.exit(0);
-});
-
-process.on('SIGTERM', async () => {
-    await prisma.$disconnect();
+// Manejo de cierre graceful
+process.on('SIGTERM', () => {
+    console.log('Cerrando servidor...');
+    prisma.$disconnect();
     process.exit(0);
 });
 
