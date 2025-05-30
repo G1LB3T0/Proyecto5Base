@@ -15,7 +15,12 @@ import {
   TextField,
   IconButton,
   Typography,
-  Box
+  Box,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Chip
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 
@@ -123,6 +128,21 @@ function Estudiantes() {
     }
   };
 
+  const getEstadoColor = (estado) => {
+    switch (estado) {
+      case 'ACTIVO':
+        return 'success';
+      case 'INACTIVO':
+        return 'error';
+      case 'GRADUADO':
+        return 'info';
+      case 'SUSPENDIDO':
+        return 'warning';
+      default:
+        return 'default';
+    }
+  };
+
   return (
     <div>
       <Box sx={{ 
@@ -174,7 +194,13 @@ function Estudiantes() {
                 <TableCell>{estudiante.nombre}</TableCell>
                 <TableCell>{estudiante.apellido}</TableCell>
                 <TableCell>{estudiante.email}</TableCell>
-                <TableCell>{estudiante.estado}</TableCell>
+                <TableCell>
+                  <Chip 
+                    label={estudiante.estado} 
+                    color={getEstadoColor(estudiante.estado)}
+                    size="small"
+                  />
+                </TableCell>
                 <TableCell align="center">
                   <IconButton 
                     onClick={() => handleOpen(estudiante)} 
@@ -265,6 +291,20 @@ function Estudiantes() {
               InputLabelProps={{ shrink: true }}
               size="small"
             />
+            <FormControl fullWidth margin="normal" size="small">
+              <InputLabel>Estado</InputLabel>
+              <Select
+                value={formData.estado}
+                onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                label="Estado"
+                required
+              >
+                <MenuItem value="ACTIVO">Activo</MenuItem>
+                <MenuItem value="INACTIVO">Inactivo</MenuItem>
+                <MenuItem value="GRADUADO">Graduado</MenuItem>
+                <MenuItem value="SUSPENDIDO">Suspendido</MenuItem>
+              </Select>
+            </FormControl>
           </form>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>

@@ -19,7 +19,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Box
+  Box,
+  Chip
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
 
@@ -32,8 +33,10 @@ function Materias() {
   const [formData, setFormData] = useState({
     codigo_materia: '',
     nombre: '',
+    descripcion: '',
     creditos: '',
-    estado: 'ACTIVO'
+    nivel: 'BASICO',
+    activa: true
   });
 
   useEffect(() => {
@@ -65,8 +68,10 @@ function Materias() {
       setFormData({
         codigo_materia: '',
         nombre: '',
+        descripcion: '',
         creditos: '',
-        estado: 'ACTIVO'
+        nivel: 'BASICO',
+        activa: true
       });
     }
     setOpen(true);
@@ -162,6 +167,7 @@ function Materias() {
               <TableCell>Código</TableCell>
               <TableCell>Nombre</TableCell>
               <TableCell>Créditos</TableCell>
+              <TableCell>Nivel</TableCell>
               <TableCell>Estado</TableCell>
               <TableCell align="center">Acciones</TableCell>
             </TableRow>
@@ -172,7 +178,14 @@ function Materias() {
                 <TableCell>{materia.codigo_materia}</TableCell>
                 <TableCell>{materia.nombre}</TableCell>
                 <TableCell>{materia.creditos}</TableCell>
-                <TableCell>{materia.estado}</TableCell>
+                <TableCell>{materia.nivel}</TableCell>
+                <TableCell>
+                  <Chip 
+                    label={materia.activa ? "Activa" : "Inactiva"} 
+                    color={materia.activa ? "success" : "error"}
+                    size="small"
+                  />
+                </TableCell>
                 <TableCell align="center">
                   <IconButton 
                     onClick={() => handleOpen(materia)} 
@@ -227,6 +240,16 @@ function Materias() {
             />
             <TextField
               fullWidth
+              label="Descripción"
+              value={formData.descripcion}
+              onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+              margin="normal"
+              size="small"
+              multiline
+              rows={2}
+            />
+            <TextField
+              fullWidth
               label="Créditos"
               type="number"
               value={formData.creditos}
@@ -236,14 +259,27 @@ function Materias() {
               size="small"
             />
             <FormControl fullWidth margin="normal" size="small">
+              <InputLabel>Nivel</InputLabel>
+              <Select
+                value={formData.nivel}
+                onChange={(e) => setFormData({ ...formData, nivel: e.target.value })}
+                label="Nivel"
+              >
+                <MenuItem value="BASICO">Básico</MenuItem>
+                <MenuItem value="INTERMEDIO">Intermedio</MenuItem>
+                <MenuItem value="AVANZADO">Avanzado</MenuItem>
+                <MenuItem value="EXPERTO">Experto</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="normal" size="small">
               <InputLabel>Estado</InputLabel>
               <Select
-                value={formData.estado}
-                onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                value={formData.activa}
+                onChange={(e) => setFormData({ ...formData, activa: e.target.value })}
                 label="Estado"
               >
-                <MenuItem value="ACTIVO">Activo</MenuItem>
-                <MenuItem value="INACTIVO">Inactivo</MenuItem>
+                <MenuItem value={true}>Activa</MenuItem>
+                <MenuItem value={false}>Inactiva</MenuItem>
               </Select>
             </FormControl>
           </form>
