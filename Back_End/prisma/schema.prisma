@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model estudiante_materia {
+  id                 Int         @id @default(autoincrement())
+  estudiante_id      Int
+  materia_id         Int
+  calificacion       Decimal?    @db.Decimal(4, 2)
+  fecha_inscripcion  DateTime    @default(dbgenerated("CURRENT_DATE")) @db.Date
+  fecha_finalizacion DateTime?   @db.Date
+  estado             String      @default("CURSANDO") @db.VarChar(20)
+  intentos           Int?        @default(1)
+  created_at         DateTime?   @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?   @default(now()) @db.Timestamp(6)
+  estudiantes        estudiantes @relation(fields: [estudiante_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_estudiante")
+  materias           materias    @relation(fields: [materia_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_materia")
+
+  @@unique([estudiante_id, materia_id], map: "unique_estudiante_materia_activa")
+  @@index([estado], map: "idx_estudiante_materia_estado")
+  @@index([estudiante_id], map: "idx_estudiante_materia_estudiante")
+  @@index([materia_id], map: "idx_estudiante_materia_materia")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model estudiantes {
+  id                   Int                  @id @default(autoincrement())
+  codigo_estudiante    String               @unique @db.VarChar(10)
+  nombre               String               @db.VarChar(100)
+  apellido             String               @db.VarChar(100)
+  email                String               @unique @db.VarChar(150)
+  telefono             String?              @db.VarChar(15)
+  fecha_nacimiento     DateTime             @db.Date
+  fecha_ingreso        DateTime             @default(dbgenerated("CURRENT_DATE")) @db.Date
+  estado               estado_estudiante    @default(ACTIVO)
+  promedio_general     Decimal?             @default(0.00) @db.Decimal(4, 2)
+  creditos_completados Int?                 @default(0)
+  created_at           DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?            @default(now()) @db.Timestamp(6)
+  estudiante_materia   estudiante_materia[]
+
+  @@index([email], map: "idx_estudiantes_email")
+  @@index([estado], map: "idx_estudiantes_estado")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model materias {
+  id                 Int                  @id @default(autoincrement())
+  codigo_materia     String               @unique @db.VarChar(8)
+  nombre             String               @db.VarChar(150)
+  descripcion        String?
+  creditos           Int
+  nivel              nivel_dificultad     @default(BASICO)
+  prerequisitos      String?
+  activa             Boolean              @default(true)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?            @default(now()) @db.Timestamp(6)
+  estudiante_materia estudiante_materia[]
+
+  @@index([activa], map: "idx_materias_activa")
+}
+
+enum estado_estudiante {
+  ACTIVO
+  INACTIVO
+  GRADUADO
+  SUSPENDIDO
+}
+
+enum nivel_dificultad {
+  BASICO
+  INTERMEDIO
+  AVANZADO
+  EXPERTO
+}
