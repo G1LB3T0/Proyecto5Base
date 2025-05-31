@@ -26,7 +26,9 @@ Proyecto5Base/
 CREATE DATABASE gestion_academica;
 ```
 
-2. Crear el archivo `.env` en la carpeta `Back_End` con el siguiente contenido:
+2. Ejecutar el archivo `init.sql` en pgAdmin para configurar los tipos de datos personalizados y la estructura inicial de la base de datos.
+
+3. Crear el archivo `.env` en la carpeta `Back_End` con el siguiente contenido:
 ```env
 # Configuración de la base de datos PostgreSQL
 DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/gestion_academica?schema=public"
@@ -54,11 +56,11 @@ npm install dotenv
 
 ## Dependencias Frontend
 ```bash
-npm install @mui/material
-npm install @emotion/react
-npm install @emotion/styled
-npm install @mui/icons-material
+npm install
+npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
 ```
+
+Nota: Es OBLIGATORIO ejecutar el comando de instalación de las dependencias de Material-UI después del `npm install` inicial en el Frontend.
 
 ## Configuración y Ejecución
 
