@@ -1,7 +1,7 @@
 # Lab 3 - Tipos de datos personalizados y ORM
 
 ## Integrantes
-- Joel Jaques
+- Joel Jaquez
 - Luis Gonzalez
 
 ## Descripción
